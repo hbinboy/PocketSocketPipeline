@@ -6,4 +6,6 @@ package com.hb.pocket.server.manager;
 public interface IServerThreadManagerListener {
 
     public void shutDown();
+
+    public void onRead(String msg);
 }

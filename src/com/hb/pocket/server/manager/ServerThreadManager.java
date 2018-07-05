@@ -49,6 +49,11 @@ public class ServerThreadManager {
                 iServerThreadListener.clientSocketCloseRemove(true,ServerThreadManager.this);
             }
         }
+
+        @Override
+        public void onRead(String msg) {
+            serverWriteThread.sendMessage("Server receive your msg!");
+        }
     };
 
     /**

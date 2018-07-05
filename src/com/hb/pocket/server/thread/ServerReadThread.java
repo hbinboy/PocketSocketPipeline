@@ -85,9 +85,11 @@ public class ServerReadThread extends ServerThreadParent {
             // Read the data from client socket, if empty, wait.
             try {
                 info = myBufferedReader.readLine1(true);
+                iServerThreadManagerListener.onRead(info);
                 while(info !=null){
                     MyLog.i(TAG, info);
                     info = myBufferedReader.readLine1(true);
+                    iServerThreadManagerListener.onRead(info);
                 }
             } catch (IOException e) {
                 e.printStackTrace();

@@ -26,6 +26,8 @@ public class ServerWriteThread extends ServerThreadParent {
      */
     private volatile ServerThreadStatus order;
 
+    private volatile String msg;
+
     /**
      * Object lock.
      */
@@ -40,6 +42,7 @@ public class ServerWriteThread extends ServerThreadParent {
         super(socket);
     }
 
+
     /**
      * Close current thread.
      */
@@ -51,12 +54,19 @@ public class ServerWriteThread extends ServerThreadParent {
         }
     }
 
+    public void sendMessage(String msg) {
+        synchronized (object) {
+            order = ServerThreadStatus.SENDMSG;
+            this.msg = msg;
+            object.notify();
+        }
+    }
     /**
      * Send a message to the client.
      * @param msg
      * @return
      */
-    public boolean sendMsg(String msg) {
+    private boolean sendMsg(String msg) {
         if (outputStream == null) {
             try {
                 outputStream = socket.getOutputStream();
@@ -65,16 +75,27 @@ public class ServerWriteThread extends ServerThreadParent {
                 return false;
             }
         }
+        String[] strArr = msg.split("\n");
         if (printWriter == null) {
             if (outputStream != null) {
-                printWriter = new PrintWriter(outputStream);
-                printWriter.write(msg);
+                int i =0;
+                for (i = 0; i < strArr.length - 1; i++) {
+                    printWriter.write(strArr[i]);
+                    printWriter.write("\n");
+                }
+                printWriter.write(strArr[i]);
+                printWriter.write("\n");
                 printWriter.flush();
-
                 return true;
             }
         } else {
-            printWriter.write(msg);
+            int i =0;
+            for (i = 0; i < strArr.length - 1; i++) {
+                printWriter.write(strArr[i]);
+                printWriter.write("\n");
+            }
+            printWriter.write(strArr[i]);
+            printWriter.write("\n");printWriter.write(msg);
             printWriter.flush();
             return true;
         }
@@ -87,8 +108,8 @@ public class ServerWriteThread extends ServerThreadParent {
             MyLog.i(TAG, "ServerWriteThread enter.");
             synchronized (object) {
                 if (order == ServerThreadStatus.SENDMSG) {
-                    sendMsg("Received\nmessage");
-                    MyLog.i(TAG, "Send");
+                    sendMsg(msg);
+                    MyLog.i(TAG, "ServerWriteThread response.");
                     order = ServerThreadStatus.IDEL;
                 }
                 if (order == ServerThreadStatus.CLOSE) {

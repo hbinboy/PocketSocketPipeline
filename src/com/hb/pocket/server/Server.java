@@ -29,9 +29,10 @@ public class Server implements Runnable {
     private Server() {
         socketMap = new ConcurrentHashMap<>();
         try {
-//            InetAddress address = InetAddress.getLocalHost();
+            byte[] b = new byte[] {(byte)10,(byte)250,(byte)11,(byte)43};
+            InetAddress address = InetAddress.getByAddress(b);
             // Temp hard code.
-            serverSocket = new ServerSocket(7909);
+            serverSocket = new ServerSocket(7909, 5, address);
         } catch (UnknownHostException e) {
             e.printStackTrace();
         } catch (IOException e) {
