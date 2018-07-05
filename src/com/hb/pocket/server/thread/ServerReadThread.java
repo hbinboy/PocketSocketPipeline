@@ -91,10 +91,13 @@ public class ServerReadThread extends ServerThreadParent {
                     info = myBufferedReader.readLine1(true);
                     iServerThreadManagerListener.onRead(info);
                 }
+                shutDown = true;
             } catch (IOException e) {
                 e.printStackTrace();
+                shutDown = true;
             } catch (Exception e) {
                 e.printStackTrace();
+                shutDown = true;
             }
         }
         MyLog.i(TAG, "ServerReadThread exit.");

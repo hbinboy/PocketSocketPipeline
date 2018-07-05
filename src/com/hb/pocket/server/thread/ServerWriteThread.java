@@ -78,6 +78,7 @@ public class ServerWriteThread extends ServerThreadParent {
         String[] strArr = msg.split("\n");
         if (printWriter == null) {
             if (outputStream != null) {
+                printWriter = new PrintWriter(outputStream);
                 int i =0;
                 for (i = 0; i < strArr.length - 1; i++) {
                     printWriter.write(strArr[i]);

@@ -52,7 +52,9 @@ public class ServerThreadManager {
 
         @Override
         public void onRead(String msg) {
-            serverWriteThread.sendMessage("Server receive your msg!");
+            if (msg != null && !msg.equals("")) {
+                serverWriteThread.sendMessage("Server receive your msg!");
+            }
         }
     };
 
