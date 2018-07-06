@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -114,5 +116,29 @@ public class Server implements Runnable {
             }
         }
         MyLog.i(TAG, "Server thread exit while loop");
+    }
+
+    // ============================================= Server utils function =============================================
+
+    /**
+     * Get the client sockets numbers.
+     * @return
+     */
+    public long getClientCount() {
+        if (socketMap == null) {
+            return 0;
+        }
+        return socketMap.size();
+    }
+
+    public List<String> getAllList() {
+        List<String> res = new ArrayList<>();
+        if (socketMap == null) {
+            return res;
+        }
+        for (ConcurrentHashMap.Entry<ServerThreadManager, ServerThreadManager> entry : socketMap.entrySet()) {
+            res.add(entry.getKey().toString());
+        }
+        return res;
     }
 }
