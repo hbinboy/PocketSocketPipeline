@@ -2,6 +2,7 @@ package com.hb.pocket.server;
 
 import com.hb.pocket.server.manager.ServerThreadManager;
 import com.hb.pocket.server.thread.IServerThreadListener;
+import com.hb.utils.config.ServerConfig;
 import com.hb.utils.log.MyLog;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -31,10 +32,24 @@ public class Server implements Runnable {
     private Server() {
         socketMap = new ConcurrentHashMap<>();
         try {
-            byte[] b = new byte[] {(byte)10,(byte)250,(byte)11,(byte)43};
-            InetAddress address = InetAddress.getByAddress(b);
-            // Temp hard code.
-            serverSocket = new ServerSocket(7909, 5, address);
+            if (ServerConfig.autoGetIp) {
+                String address = InetAddress.getLocalHost().getHostAddress().toString();
+                if (address != null && !"".equals(address)) {
+                    ServerConfig.ip = address;
+                    String[] addressTmp = address.split("\\.");
+                    byte[] ipByte = new byte[addressTmp.length];
+                    for (int i = 0; i < ipByte.length; i++) {
+                        ipByte[i] = Integer.valueOf(addressTmp[i]).byteValue();
+                    }
+                    InetAddress inetAddress = InetAddress.getByAddress(ipByte);
+                    serverSocket = new ServerSocket(ServerConfig.port, ServerConfig.backLog, inetAddress);
+                } else {
+                    MyLog.e(TAG, "Can not get the ip address,could not start the server.");
+                }
+            } else {
+                InetAddress inetAddress = InetAddress.getByAddress(ServerConfig.IpByte);
+                serverSocket = new ServerSocket(ServerConfig.port, ServerConfig.backLog, inetAddress);
+            }
         } catch (UnknownHostException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -88,6 +103,8 @@ public class Server implements Runnable {
             listenerThread = new Thread(this);
             // Start the listen thread.
             listenerThread.start();
+            MyLog.i(TAG, "Server sarted Ip in " + ServerConfig.ip);
+            MyLog.i(TAG, "Server sarted pot in " + ServerConfig.port);
         }
     }
 
