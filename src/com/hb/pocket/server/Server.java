@@ -104,7 +104,7 @@ public class Server implements Runnable {
             // Start the listen thread.
             listenerThread.start();
             MyLog.i(TAG, "Server sarted Ip in " + ServerConfig.ip);
-            MyLog.i(TAG, "Server sarted pot in " + ServerConfig.port);
+            MyLog.i(TAG, "Server sarted port in " + ServerConfig.port);
         }
     }
 
