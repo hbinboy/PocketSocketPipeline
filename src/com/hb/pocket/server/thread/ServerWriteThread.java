@@ -96,7 +96,7 @@ public class ServerWriteThread extends ServerThreadParent {
                 printWriter.write("\n");
             }
             printWriter.write(strArr[i]);
-            printWriter.write("\n");printWriter.write(msg);
+            printWriter.write("\n");
             printWriter.flush();
             return true;
         }
