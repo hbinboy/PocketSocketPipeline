@@ -100,6 +100,10 @@ public class ServerReadThread extends ServerThreadParent {
                 shutDown = true;
             }
         }
+        // If client socket is closed. The server socket client to close.
+        if (iServerThreadManagerListener != null) {
+            iServerThreadManagerListener.shutDown();
+        }
         MyLog.i(TAG, "ServerReadThread exit.");
     }
 }

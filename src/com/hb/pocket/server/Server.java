@@ -121,6 +121,7 @@ public class Server implements Runnable {
                     public void clientSocketCloseRemove(boolean isClose, ServerThreadManager serverThread) {
                         if (socketMap != null && socketMap.size() > 0) {
                             socketMap.remove(serverThread);
+                            MyLog.i(TAG, "Client is close");
                         }
                     }
                 });

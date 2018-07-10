@@ -24,6 +24,9 @@ public class ServerConfig {
      */
     public static final int port = 7909;
 
+    /**
+     * The socket accept backlog count.
+     */
     public static final int backLog = 1000;
 
 }
