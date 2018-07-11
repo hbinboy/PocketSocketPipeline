@@ -79,7 +79,7 @@ public class ServerWriteThread extends ServerThreadParent {
         if (printWriter == null) {
             if (outputStream != null) {
                 printWriter = new PrintWriter(outputStream);
-                int i =0;
+                int i = 0;
                 for (i = 0; i < strArr.length - 1; i++) {
                     printWriter.write(strArr[i]);
                     printWriter.write("\n");
@@ -90,7 +90,7 @@ public class ServerWriteThread extends ServerThreadParent {
                 return true;
             }
         } else {
-            int i =0;
+            int i = 0;
             for (i = 0; i < strArr.length - 1; i++) {
                 printWriter.write(strArr[i]);
                 printWriter.write("\n");
