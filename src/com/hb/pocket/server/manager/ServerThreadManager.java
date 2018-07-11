@@ -74,6 +74,8 @@ public class ServerThreadManager {
         serverWriteThread.setShutDown();
         // By the read thread call the parent to close the socket.
         serverReadThread.shutDownParentSocket();
+        serverReadThread = null;
+        serverWriteThread = null;
         if (iServerThreadListener != null) {
             iServerThreadListener.clientSocketCloseRemove(true,ServerThreadManager.this);
         }
