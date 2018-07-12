@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
+ * This Version(1.0.0) is implemented by the socket accept function and mutil-threads.
+ * It support 150 client sockets. It naive version, so it don't support high concurrency.
  * Created by hb on 04/07/2018.
  */
 public class Server implements Runnable {
