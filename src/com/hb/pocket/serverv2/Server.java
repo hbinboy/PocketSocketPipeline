@@ -273,6 +273,18 @@ public class Server implements Runnable{
         }
     }
 
+    public void clearAllClients() {
+        if (socketChannelMap != null) {
+            for (ConcurrentHashMap.Entry<SocketChannel, SocketChannel> entry : socketChannelMap.entrySet()) {
+                try {
+                    entry.getValue().close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            socketChannelMap.clear();
+        }
+    }
     /**
      * Send a message to the all clients.
      * @param msg

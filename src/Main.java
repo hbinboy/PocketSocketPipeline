@@ -58,6 +58,10 @@ public class Main {
                     server.sendBroadMessage(msg + "\n");
                 }
             }
+            if (str.equals("Clear".toLowerCase())) {
+                server.clearAllClients();
+                MyLog.i(TAG, "Remove all the clients.");
+            }
         }
         MyLog.i(TAG, "Main thread is exited.");
     }
