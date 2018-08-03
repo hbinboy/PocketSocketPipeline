@@ -1,3 +1,4 @@
+import com.hb.pocket.commandline.CommandLine;
 import com.hb.pocket.server.Server;
 import com.hb.utils.log.MyLog;
 
@@ -32,35 +33,13 @@ public class Main {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        CommandLine commandLine = new CommandLine(server);
         Scanner sc = new Scanner(System.in);
         sc.useDelimiter("\n");
         while (sc.hasNext()) {
             String str = sc.next();
-            if (str.equals("Exit".toLowerCase())) {
-                try {
-                    server.shutDownServer();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            if (commandLine.excute(str)) {
                 break;
-            }
-            if (str.equals("ClientCount".toLowerCase())) {
-                MyLog.i(TAG, "ClientCount number: " + server.getClientCount());
-            }
-            if (str.startsWith("SendBroadMsg".toLowerCase())) {
-                int index = str.indexOf(' ');
-                if (index == -1) {
-                    MyLog.i(TAG, "Command can not execute.");
-                    continue;
-                } else {
-                    String msg = str.substring(index);
-                    server.sendBroadMessage(msg + "\n");
-                }
-            }
-            if (str.equals("Clear".toLowerCase())) {
-                server.clearAllClients();
-                MyLog.i(TAG, "Remove all the clients.");
             }
         }
         MyLog.i(TAG, "Main thread is exited.");
