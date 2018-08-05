@@ -9,7 +9,7 @@ import java.util.List;
  */
 public class Getopt {
 
-    private static String TAG = Server.class.getSimpleName();
+    private static String TAG = Getopt.class.getSimpleName();
 
     protected String commandName;
 
