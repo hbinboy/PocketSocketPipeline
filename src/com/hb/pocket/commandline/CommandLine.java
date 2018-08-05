@@ -21,21 +21,8 @@ public class CommandLine {
 
     private Map<String, List<LongOpt>> mainCommandMap = new HashMap<>();
 
-/*    private List<LongOpt> mainLongOptList = null;
-
-    private List<LongOpt> subLongOptList = null;
-
-    private StringBuffer flag;*/
-
     public CommandLine(com.hb.pocket.serverv2.Server server) {
         this.server = server;
-
-        /*mainLongOptList = new ArrayList<>();
-        mainLongOptList.add(new LongOpt("help", LongOpt.NO_ARGUMENT, null, 'h'));
-        mainLongOptList.add(new LongOpt("version", LongOpt.NO_ARGUMENT, null, 'v'));
-        mainLongOptList.add(new LongOpt("exit", LongOpt.NO_ARGUMENT, null, 'e'));
-        mainLongOptList.add(new LongOpt("test", LongOpt.OPTIONAL_ARGUMENT, null, 100));*/
-
         initMainCommand();
     }
 
