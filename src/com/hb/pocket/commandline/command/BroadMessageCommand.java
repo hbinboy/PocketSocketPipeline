@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class BroadMessageCommand extends Command{
 
-    private static String TAG = Server.class.getSimpleName();
+    private static String TAG = BroadMessageCommand.class.getSimpleName();
 
     private Server server;
 
@@ -27,12 +27,6 @@ public class BroadMessageCommand extends Command{
         while ((ch = getopt.getopt()) != -1) {
             switch (ch) {
                 case 'M' :
-                    str = getopt.getOptarg();
-                    if (str != null && !str.equals("")) {
-                        server.sendBroadMessage(str + "\n");
-                    }
-                    break;
-                case 'N' :
                     str = getopt.getOptarg();
                     if (str != null && !str.equals("")) {
                         server.sendBroadMessage(str + "\n");

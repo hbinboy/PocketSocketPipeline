@@ -2,7 +2,6 @@ package com.hb.pocket.commandline;
 
 import com.hb.pocket.commandline.command.BroadMessageCommand;
 import com.hb.pocket.commandline.parser.LongOpt;
-import com.hb.pocket.serverv2.Server;
 import com.hb.utils.log.MyLog;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,20 +28,20 @@ public class CommandLine {
     private void initMainCommand() {
         mainCommandMap = new HashMap<>();
         // Exit command params, no params.
-        mainCommandMap.put("exit", null);
+        mainCommandMap.put("Exit".toLowerCase(), null);
         // ClientCount command params, no  params.
-        mainCommandMap.put("clientcount", null);
+        mainCommandMap.put("ClientCount".toLowerCase(), null);
         // SendBroadMessage command parama, require a string.
         List<LongOpt> sendBroadMessageList = new ArrayList<>();
         sendBroadMessageList.add(new LongOpt("message", LongOpt.REQUIRED_ARGUMENT, 'M',"Send a message to all the clients."));
-        mainCommandMap.put("broadmessage", sendBroadMessageList);
+        mainCommandMap.put("BroadMessage".toLowerCase(), sendBroadMessageList);
         // Clear all clients.
-        mainCommandMap.put("clearclient", null);
-        mainCommandMap.put("help", null);
-        mainCommandMap.put("version", null);
+        mainCommandMap.put("ClearClient".toLowerCase(), null);
+        mainCommandMap.put("Help".toLowerCase(), null);
+        mainCommandMap.put("Version".toLowerCase(), null);
     }
 
-    public String[] string2Array(String commandLine) {
+    private String[] string2Array(String commandLine) {
         if (commandLine == null || commandLine.trim().equals("")) {
             return null;
         }
