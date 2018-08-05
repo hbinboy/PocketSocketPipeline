@@ -32,13 +32,6 @@ public class BroadMessageCommand extends Command{
                         server.sendBroadMessage(str + "\n");
                     }
                     break;
-                case 'm':
-                    MyLog.i(TAG, "m");
-                    str = getopt.getOptarg();
-                    if (str != null) {
-                        MyLog.i(TAG, "value = " + str);
-                    }
-                    break;
                 case 'N' :
                     str = getopt.getOptarg();
                     if (str != null && !str.equals("")) {
