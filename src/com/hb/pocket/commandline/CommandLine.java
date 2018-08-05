@@ -15,7 +15,7 @@ import java.util.Map;
  */
 public class CommandLine {
 
-    private static String TAG = Server.class.getSimpleName();
+    private static String TAG = CommandLine.class.getSimpleName();
 
     private com.hb.pocket.serverv2.Server server;
 
