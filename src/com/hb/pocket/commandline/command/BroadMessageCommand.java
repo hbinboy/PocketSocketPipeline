@@ -29,7 +29,7 @@ public class BroadMessageCommand extends Command{
                 case 'M' :
                     str = getopt.getOptarg();
                     if (str != null && !str.equals("")) {
-                        server.sendBroadMessage(str + "\n");
+                        server.sendBroadMessage(str);
                     }
                     break;
                 case ':':
