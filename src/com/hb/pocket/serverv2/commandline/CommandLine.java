@@ -1,7 +1,7 @@
-package com.hb.pocket.commandline;
+package com.hb.pocket.serverv2.commandline;
 
-import com.hb.pocket.commandline.command.BroadMessageCommand;
-import com.hb.pocket.commandline.parser.LongOpt;
+import com.hb.pocket.serverv2.commandline.command.BroadMessageCommand;
+import com.hb.pocket.parser.LongOpt;
 import com.hb.utils.log.MyLog;
 import java.io.IOException;
 import java.util.ArrayList;

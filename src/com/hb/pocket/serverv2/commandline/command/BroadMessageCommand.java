@@ -1,6 +1,6 @@
-package com.hb.pocket.commandline.command;
+package com.hb.pocket.serverv2.commandline.command;
 
-import com.hb.pocket.commandline.parser.LongOpt;
+import com.hb.pocket.parser.LongOpt;
 import com.hb.pocket.serverv2.Server;
 import com.hb.utils.log.MyLog;
 
