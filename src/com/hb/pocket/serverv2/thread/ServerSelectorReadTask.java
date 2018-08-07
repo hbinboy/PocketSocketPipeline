@@ -22,11 +22,6 @@ public class ServerSelectorReadTask implements Runnable {
 
     private IServerSelectorReadCallback iServerSelectorReadCallback;
 
-    /**
-     * Save the received data.
-     */
-    private ByteBuffer data = ByteBuffer.allocate(1024);
-
     public ServerSelectorReadTask(SocketChannel socketChannel, IServerSelectorReadCallback iServerSelectorReadCallback) {
         this.socketChannel = socketChannel;
         this.iServerSelectorReadCallback = iServerSelectorReadCallback;
