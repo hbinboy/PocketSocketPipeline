@@ -49,16 +49,21 @@ public class ServerSelectorWriteTask implements Runnable {
     /**
      * Process the write.
      * @param channel
-     * @param data
+     * @param msg
      * @throws IOException
      */
-    private boolean write(SocketChannel channel, String data) throws IOException {
+    private boolean write(SocketChannel channel, String msg) throws IOException {
         try {
-            byte[] bytes = data.getBytes(Charset.forName("UTF-8"));
-            ByteBuffer buffer = ByteBuffer.allocate(bytes.length); // Alloc heap buffer.
-            buffer.put(bytes);
-            buffer.flip(); // Switch the read model.
-            channel.write(buffer);
+            String[] tmpArray = msg.split("\n");
+            ByteBuffer[] bufferArray = new ByteBuffer[tmpArray.length];
+            for (int i = 0; i < tmpArray.length; i++) {
+                byte[] bytes = (tmpArray[i] + "\n").getBytes(Charset.forName("UTF-8"));
+                ByteBuffer buffer = ByteBuffer.allocate(bytes.length); // Alloc heap buffer.
+                buffer.put(bytes);
+                buffer.flip();// Switch the read model.
+                bufferArray[i] = buffer;
+            }
+            channel.write(bufferArray, 0, bufferArray.length);
             return true;
         } catch (IOException e) {
             if (channel != null) {

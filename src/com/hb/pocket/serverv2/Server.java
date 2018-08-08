@@ -242,31 +242,6 @@ public class Server implements Runnable{
     }
 
     /**
-     * Process the write.
-     * @param channel
-     * @param msg
-     * @throws IOException
-     */
-    private void write(SocketChannel channel, String msg) throws IOException {
-        try {
-            String[] tmpArray = msg.split("\n");
-            ByteBuffer[] bufferArray = new ByteBuffer[tmpArray.length];
-            for (int i = 0; i < tmpArray.length; i++) {
-                byte[] bytes = (tmpArray[i] + "\n").getBytes(Charset.forName("UTF-8"));
-                ByteBuffer buffer = ByteBuffer.allocate(bytes.length); // Alloc heap buffer.
-                buffer.put(bytes);
-                buffer.flip();// Switch the read model.
-                bufferArray[i] = buffer;
-            }
-            channel.write(bufferArray, 0, bufferArray.length);
-        } catch (IOException e) {
-            if (channel != null) {
-                channel.close();
-            }
-        }
-    }
-
-    /**
      * Get the client number.
      * @return
      */
@@ -297,11 +272,17 @@ public class Server implements Runnable{
     public void sendBroadMessage(String msg) {
         if (socketChannelMap != null) {
             for (ConcurrentHashMap.Entry<SocketChannel, SocketChannel> entry : socketChannelMap.entrySet()) {
-                try {
-                    write(entry.getValue(), msg);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                threadWritePoolExecutor.execute(new ServerSelectorWriteTask(entry.getValue(), msg + "\n", new IServerSelectorWriteCallback() {
+                    @Override
+                    public void onStartWrite() {
+
+                    }
+
+                    @Override
+                    public void onEndWrite(boolean isSuccess) {
+
+                    }
+                }));
             }
         }
     }
