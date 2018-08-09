@@ -60,9 +60,6 @@ public class ServerSelectorReadTask implements Runnable {
             }
             return len;
         } catch (IOException e) {
-            if (channel != null) {
-                channel.close();
-            }
             if (iServerSelectorReadCallback != null) {
                 iServerSelectorReadCallback.onEndRead(null, -1);
             }

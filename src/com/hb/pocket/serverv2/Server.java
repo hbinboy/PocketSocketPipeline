@@ -151,12 +151,12 @@ public class Server implements Runnable{
                 while (it.hasNext()) {
                     selectionKey = it.next();
                     it.remove();
-                    if (selectionKey.isAcceptable()) { // The connection reach.
+                    if (selectionKey.isValid() && selectionKey.isAcceptable()) { // The connection reach.
                         MyLog.i(TAG, "Accept start...");
                         accept();
                     } else {
                         SocketChannel channel = (SocketChannel) selectionKey.channel();
-                        if (selectionKey.isWritable()) {  // If can write.
+                        if (selectionKey.isValid() && selectionKey.isWritable()) {  // If can write.
                             MyLog.i(TAG, "Write start...");
                             threadWritePoolExecutor.execute(new ServerSelectorWriteTask(channel, "Hello Nioclicket!\n", new IServerSelectorWriteCallback() {
                                 @Override
@@ -285,5 +285,8 @@ public class Server implements Runnable{
                 }));
             }
         }
+    }
+    public Selector getSelector() {
+        return selector;
     }
 }

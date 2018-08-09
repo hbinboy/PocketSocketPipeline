@@ -39,6 +39,7 @@ public class CommandLine {
         mainCommandMap.put("ClearClient".toLowerCase(), null);
         mainCommandMap.put("Help".toLowerCase(), null);
         mainCommandMap.put("Version".toLowerCase(), null);
+        mainCommandMap.put("Selector".toLowerCase(), null);
     }
 
     private String[] string2Array(String commandLine) {
@@ -64,23 +65,22 @@ public class CommandLine {
         if (args[0].toLowerCase().startsWith("BroadMessage".toLowerCase())) {
             BroadMessageCommand broadMessageCommand = new BroadMessageCommand("BroadMessage", mainCommandMap.get(args[0].toLowerCase()),commandLine, "-:M", server);
             broadMessageCommand.excute();
-        }
-        if (args[0].toLowerCase().startsWith("Exit".toLowerCase())) {
+        } else if (args[0].toLowerCase().startsWith("Exit".toLowerCase())) {
             try {
                 server.shutDownServer();
             } catch (IOException e) {
                 e.printStackTrace();
             }
             return true;
-        }
-        if (args[0].toLowerCase().startsWith("ClientCount".toLowerCase())) {
+        } else if (args[0].toLowerCase().startsWith("ClientCount".toLowerCase())) {
             MyLog.i(TAG, "" + server.getClientCount());
-        }
-        if (args[0].toLowerCase().startsWith("ClearClient".toLowerCase())) {
+        } else if (args[0].toLowerCase().startsWith("ClearClient".toLowerCase())) {
+            server.clearAllClients();
             MyLog.i(TAG, "Close and remove all the clients.");
-        }
-        if (args[0].toLowerCase().startsWith("version".toLowerCase())) {
+        } else if (args[0].toLowerCase().startsWith("version".toLowerCase())) {
             MyLog.i(TAG, "2.0.0 version.");
+        } else if (args[0].toLowerCase().startsWith("Selector".toLowerCase())) {
+            server.getSelector();
         }
         return false;
     }
