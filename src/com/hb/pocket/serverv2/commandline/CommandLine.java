@@ -46,11 +46,20 @@ public class CommandLine {
         if (commandLine == null || commandLine.trim().equals("")) {
             return null;
         }
-        String[] tmp = commandLine.trim().split(" ");
+        String[] tmpResult = commandLine.trim().split(" ");
         List<String> list = new ArrayList<>();
-        for (int i = 0; i < tmp.length; i++) {
-            if (tmp[i] != null && !tmp[i].trim().equals("")) {
-                list.add(tmp[i].trim());
+        for (int i = 0; i < tmpResult.length; i++) {
+            if (tmpResult[i] != null && !tmpResult[i].trim().equals("")) {
+                if (tmpResult[i].startsWith("-") || tmpResult[i].startsWith("--")) {
+                    String[] tmp = tmpResult[i].split("=");
+                    if (tmp != null) {
+                        for (int j = 0; j < tmp.length; j++) {
+                            list.add(tmp[j]);
+                        }
+                    }
+                } else {
+                    list.add(tmpResult[i].trim());
+                }
             }
         }
         String[] result = list.toArray(new String[list.size()]);
