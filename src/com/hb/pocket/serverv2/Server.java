@@ -105,7 +105,7 @@ public class Server implements Runnable{
             if (address != null && !"".equals(address)) {
                 ServerConfig.ip = address;
 
-                if (serverSocketChannel.bind(new InetSocketAddress(address,ServerConfig.port)).socket().isBound()) { // Bind success.
+                if (serverSocketChannel.bind(new InetSocketAddress(address,ServerConfig.port),Integer.MAX_VALUE).socket().isBound()) { // Bind success.
                     selectionKey.interestOps(SelectionKey.OP_ACCEPT); // Listen the connection request.
                 }
 
