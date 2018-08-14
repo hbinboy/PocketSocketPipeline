@@ -157,24 +157,24 @@ public class Server implements Runnable{
                     } else {
                         SocketChannel channel = (SocketChannel) selectionKey.channel();
                         if (selectionKey.isValid() && selectionKey.isWritable()) {  // If can write.
-                            MyLog.i(TAG, "Write start...");
-                            threadWritePoolExecutor.execute(new ServerSelectorWriteTask(channel, "Hello Nioclicket!\n", new IServerSelectorWriteCallback() {
+//                            MyLog.i(TAG, "Write start...");
+                            threadWritePoolExecutor.execute(new ServerSelectorWriteTask(channel, "" + "\n", new IServerSelectorWriteCallback() {
                                 @Override
                                 public void onStartWrite() {
-
+                                    MyLog.i(TAG, "Write start...");
                                 }
 
                                 @Override
                                 public void onEndWrite(boolean isSuccess) {
-
+                                    MyLog.i(TAG, "Write end...");
                                 }
                             }));
                             // Cancel the write model, otherwise , the selector notice the write is already reaptly.
-                            selectionKey.interestOps(selectionKey.interestOps() & ~SelectionKey.OP_WRITE);
+//                            selectionKey.interestOps(selectionKey.interestOps() & ~SelectionKey.OP_WRITE);
                         }
                         //
                         if (selectionKey.isValid() && selectionKey.isReadable()) {
-                            MyLog.i(TAG, "Read start...");
+//                            MyLog.i(TAG, "Read start...");
                             threadReadPoolExecutor.execute(new ServerSelectorReadTask(channel, new IServerSelectorReadCallback() {
                                 @Override
                                 public void onStartRead() {
@@ -183,8 +183,19 @@ public class Server implements Runnable{
 
                                 @Override
                                 public void onEndRead(String data, int length) {
-                                    if (length >= 0) {
-                                        selectionKey.interestOps(selectionKey.interestOps() | SelectionKey.OP_WRITE); // Listen the write modle,
+                                    if (length > 0) {
+//                                            MyLog.i(TAG, "Write start...");
+                                            threadWritePoolExecutor.execute(new ServerSelectorWriteTask(channel, data + "\n", new IServerSelectorWriteCallback() {
+                                                @Override
+                                                public void onStartWrite() {
+                                                    MyLog.i(TAG, "Read start...");
+                                                }
+
+                                                @Override
+                                                public void onEndWrite(boolean isSuccess) {
+                                                    MyLog.i(TAG, "Read end...");
+                                                }
+                                            }));
                                     } else if (length < 0) { // The client is closed.
                                         socketChannelMap.remove(channel);
                                         try {
