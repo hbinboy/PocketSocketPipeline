@@ -3,6 +3,8 @@ package com.hb.pocket.data;
 import com.hb.pocket.data.body.Body;
 import com.hb.pocket.data.header.Header;
 import com.hb.pocket.data.header.HeaderConstant;
+import com.hb.utils.log.MyLog;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,15 +13,25 @@ import java.util.List;
  */
 public class DataManager {
 
+    private static String TAG = DataManager.class.getSimpleName();
+
     private Header header;
 
     private Body body;
 
     public static void main(String[] args) {
         DataManager dataManager = new DataManager();
-        String str = "Hello word";
-        byte[] data = dataManager.genSendDataPackage(str);
-        dataManager.getReceiveDataPackageData(data);
+        String str = "Hello word 222222222 \n 111111";
+        String[] result = dataManager.spliteString(str, 3);
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < result.length; i++) {
+            byte[] data = dataManager.genSendDataPackage(result[i], i, result.length);
+            if (dataManager.getReceiveDataPackageData(data) != null) {
+                sb.append(dataManager.getBody().getData());
+            }
+        }
+        MyLog.i(TAG, sb.toString());
         int i = 0;
         i++;
     }
@@ -33,8 +45,36 @@ public class DataManager {
         if (data == null || data.length == 0) {
             return "";
         }
-        checkHeaderStruct(data);
-        return body.getData();
+        if (checkHeaderStruct(data)) {
+            return body.getData();
+        } else {
+            return null;
+        }
+    }
+
+    public String[] spliteString(String msg, int frameSize) {
+        if (msg == null || msg.length() == 0 || frameSize <= 0) {
+            return null;
+        }
+        int len = msg.length();
+        int frameCount;
+        if (len % frameSize == 0) {
+            frameCount = len / frameSize;
+        } else {
+            frameCount = len / frameSize + 1;
+        }
+        String[] result = new String[frameCount];
+        for (int i = 0; i < frameCount; i++) {
+            if (i * frameSize + frameSize < len) {
+                String tmp = msg.substring(i * frameSize, i * frameSize + frameSize);
+                result[i] = tmp;
+            } else {
+                String tmp = msg.substring(i * frameSize, len);
+                result[i] = tmp;
+            }
+
+        }
+        return result;
     }
 
     /**
@@ -42,7 +82,7 @@ public class DataManager {
      * @param msg
      * @return
      */
-    public byte[] genSendDataPackage(String msg) {
+    public byte[] genSendDataPackage(String msg, int index, int count) {
         if (msg == null || "".equals(msg)) {
             return null;
         }
@@ -60,14 +100,14 @@ public class DataManager {
         sendList.add(HeaderConstant.VERSION);
         sendList.add(HeaderConstant.TYPE_STRING);
         // index
-        byte[] index = intToByteArray(0);
-        for (int i = 0; i < index.length; i++) {
-            sendList.add(index[i]);
+        byte[] indexArr = intToByteArray(index);
+        for (int i = 0; i < indexArr.length; i++) {
+            sendList.add(indexArr[i]);
         }
         // count
-        byte[] count = intToByteArray(1);
-        for (int i = 0; i < count.length; i++) {
-            sendList.add(count[i]);
+        byte[] countArr = intToByteArray(count);
+        for (int i = 0; i < countArr.length; i++) {
+            sendList.add(countArr[i]);
         }
         // data length
         int dataLength = msg.getBytes().length;
@@ -270,6 +310,14 @@ public class DataManager {
     }
 
     public Body getBody(byte[] data) {
+        return body;
+    }
+
+    public Header getHeader() {
+        return header;
+    }
+
+    public Body getBody() {
         return body;
     }
 }
