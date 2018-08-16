@@ -5,6 +5,7 @@ import com.hb.pocket.serverv2.thread.callback.IServerSelectorAcceptCallback;
 import com.hb.pocket.serverv2.thread.callback.IServerSelectorReadCallback;
 import com.hb.pocket.serverv2.thread.callback.IServerSelectorWriteCallback;
 import com.hb.utils.config.ServerConfig;
+import com.hb.utils.config.XMLConfig;
 import com.hb.utils.log.MyLog;
 
 import java.io.IOException;
@@ -44,11 +45,9 @@ public class Server implements Runnable{
 
     private boolean isShutDown = false;
 
-    ThreadPoolExecutor threadReadPoolExecutor = new ThreadPoolExecutor(ServerConfig.readCorePoolSize, ServerConfig.readMaximumPoolSize, ServerConfig.readKeepAliveTime,
-            TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
+    ThreadPoolExecutor threadReadPoolExecutor = null;
 
-    ThreadPoolExecutor threadWritePoolExecutor = new ThreadPoolExecutor(ServerConfig.writeCorePoolSize , ServerConfig.writeMaximumPoolSize, ServerConfig.writeKeepAliveTime,
-            TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
+    ThreadPoolExecutor threadWritePoolExecutor = null;
 
     private Server() {
     }
@@ -78,6 +77,11 @@ public class Server implements Runnable{
      * @return
      */
     public boolean init() {
+        ServerConfig.initByXML();
+        threadReadPoolExecutor = new ThreadPoolExecutor(ServerConfig.readCorePoolSize, ServerConfig.readMaximumPoolSize, ServerConfig.readKeepAliveTime,
+                TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
+        threadWritePoolExecutor = new ThreadPoolExecutor(ServerConfig.writeCorePoolSize , ServerConfig.writeMaximumPoolSize, ServerConfig.writeKeepAliveTime,
+                TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
         selectorProvider = SelectorProvider.provider();
         socketChannelMap = new ConcurrentHashMap<>();
         try {
