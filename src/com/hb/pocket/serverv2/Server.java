@@ -102,6 +102,7 @@ public class Server implements Runnable{
         } catch (ClosedChannelException e) {
             e.printStackTrace();
         }
+
         if (ServerConfig.autoGetIp) {
             String address = InetAddress.getLocalHost().getHostAddress().toString();
             if (address != null && !"".equals(address)) {
@@ -111,13 +112,17 @@ public class Server implements Runnable{
                     selectionKey.interestOps(SelectionKey.OP_ACCEPT); // Listen the connection request.
                 }
 
-                MyLog.i(TAG, "Server sarted Ip in " + ServerConfig.ip);
+                MyLog.i(TAG, "Server sarted Ip in " + address);
                 MyLog.i(TAG, "Server sarted port in " + ServerConfig.port);
             } else {
                 MyLog.e(TAG, "Can not get the ip address,could not start the server.");
             }
         } else {
-//            if (serverSocketChannel.bind(new InetSocketAddress(ServerConfig.)))
+            if (serverSocketChannel.bind(new InetSocketAddress(ServerConfig.ip, ServerConfig.port),ServerConfig.backLog).socket().isBound()) { // Bind success.
+                selectionKey.interestOps(SelectionKey.OP_ACCEPT); // Listen the connection request.
+            }
+            MyLog.i(TAG, "Server sarted Ip in " + ServerConfig.ip);
+            MyLog.i(TAG, "Server sarted port in " + ServerConfig.port);
         }
         startLoop();
     }
