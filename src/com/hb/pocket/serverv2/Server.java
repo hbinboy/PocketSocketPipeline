@@ -44,10 +44,10 @@ public class Server implements Runnable{
 
     private boolean isShutDown = false;
 
-    ThreadPoolExecutor threadReadPoolExecutor = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors() + 10, Integer.MAX_VALUE, 5,
+    ThreadPoolExecutor threadReadPoolExecutor = new ThreadPoolExecutor(ServerConfig.readCorePoolSize, ServerConfig.readMaximumPoolSize, ServerConfig.readKeepAliveTime,
             TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
 
-    ThreadPoolExecutor threadWritePoolExecutor = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors() + 10 , Integer.MAX_VALUE, 5,
+    ThreadPoolExecutor threadWritePoolExecutor = new ThreadPoolExecutor(ServerConfig.writeCorePoolSize , ServerConfig.writeMaximumPoolSize, ServerConfig.writeKeepAliveTime,
             TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
 
     private Server() {
@@ -103,7 +103,7 @@ public class Server implements Runnable{
             if (address != null && !"".equals(address)) {
                 ServerConfig.ip = address;
 
-                if (serverSocketChannel.bind(new InetSocketAddress(address,ServerConfig.port),Integer.MAX_VALUE).socket().isBound()) { // Bind success.
+                if (serverSocketChannel.bind(new InetSocketAddress(address,ServerConfig.port),ServerConfig.backLog).socket().isBound()) { // Bind success.
                     selectionKey.interestOps(SelectionKey.OP_ACCEPT); // Listen the connection request.
                 }
 

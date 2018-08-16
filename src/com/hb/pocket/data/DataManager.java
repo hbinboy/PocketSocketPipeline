@@ -246,7 +246,7 @@ public class DataManager {
      * @param value
      * @return
      */
-    public byte[] intToByteArray(int value) {
+    private byte[] intToByteArray(int value) {
         byte[] src = new byte[4];
         src[0] = (byte) ((value >> 24) & 0xFF);
         src[1] = (byte) ((value >> 16) & 0xFF);
@@ -260,7 +260,7 @@ public class DataManager {
      * @param bArr
      * @return
      */
-    public int byteArrayToInt(byte[] bArr) {
+    private int byteArrayToInt(byte[] bArr) {
         if (bArr.length != 4) {
             return -1;
         }
@@ -275,7 +275,7 @@ public class DataManager {
      * @param arr
      * @return
      */
-    public byte[] charArrayToByte(char[] arr) {
+    private byte[] charArrayToByte(char[] arr) {
         List<Byte> sendList = new ArrayList<>();
         for (int i = 0; i < arr.length; i++) {
             byte[] b = charToByte(arr[i]);
