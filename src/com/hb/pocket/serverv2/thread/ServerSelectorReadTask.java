@@ -51,7 +51,7 @@ public class ServerSelectorReadTask implements Runnable {
             ByteBuffer buffer = ByteBuffer.allocate(1024); // Alloc heapByteBuffer
             int len = channel.read(buffer); // Unitil no data or the buffer is full.
             if (len > 0) {
-                MyLog.i(TAG, new String(buffer.array(), 0, len, Charset.forName("UTF-8"))); // buffer.array()：get the HeapByteFuffer raw data.
+                MyLog.d(TAG, new String(buffer.array(), 0, len, Charset.forName("UTF-8"))); // buffer.array()：get the HeapByteFuffer raw data.
             }
             if (iServerSelectorReadCallback != null && len > 0) {
                 iServerSelectorReadCallback.onEndRead(new String(buffer.array(), 0, len, Charset.forName("UTF-8")), len);

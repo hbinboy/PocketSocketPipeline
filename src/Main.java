@@ -14,7 +14,7 @@ public class Main {
 
     public static void main(String[] args) {
 
-        MyLog.d(TAG, "Hello Pocket Socket Pipeline!");
+        MyLog.i(TAG, "Hello Pocket Socket Pipeline!");
 //        startServerV1();
         startServerV2();
 

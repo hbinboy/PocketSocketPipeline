@@ -31,9 +31,7 @@ public class DataManager {
                 sb.append(dataManager.getBody().getData());
             }
         }
-        MyLog.i(TAG, sb.toString());
-        int i = 0;
-        i++;
+        MyLog.d(TAG, sb.toString());
     }
 
     public DataManager() {

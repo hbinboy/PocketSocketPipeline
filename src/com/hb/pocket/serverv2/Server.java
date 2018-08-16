@@ -1,6 +1,7 @@
 package com.hb.pocket.serverv2;
 
 import com.hb.pocket.serverv2.thread.*;
+import com.hb.pocket.serverv2.thread.callback.IServerSelectorAcceptCallback;
 import com.hb.pocket.serverv2.thread.callback.IServerSelectorReadCallback;
 import com.hb.pocket.serverv2.thread.callback.IServerSelectorWriteCallback;
 import com.hb.utils.config.ServerConfig;
@@ -18,10 +19,7 @@ import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * Created by hb on 12/07/2018.
@@ -49,7 +47,7 @@ public class Server implements Runnable{
     ThreadPoolExecutor threadReadPoolExecutor = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors() + 10, Integer.MAX_VALUE, 5,
             TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
 
-    ThreadPoolExecutor threadWritePoolExecutor = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors() + 10, Integer.MAX_VALUE, 5,
+    ThreadPoolExecutor threadWritePoolExecutor = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors() + 10 , Integer.MAX_VALUE, 5,
             TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
 
     private Server() {
@@ -152,30 +150,24 @@ public class Server implements Runnable{
                     selectionKey = it.next();
                     it.remove();
                     if (selectionKey.isValid() && selectionKey.isAcceptable()) { // The connection reach.
-                        MyLog.i(TAG, "Accept start...");
                         accept();
                     } else {
                         SocketChannel channel = (SocketChannel) selectionKey.channel();
                         if (selectionKey.isValid() && selectionKey.isWritable()) {  // If can write.
-//                            MyLog.i(TAG, "Write start...");
-                            threadWritePoolExecutor.execute(new ServerSelectorWriteTask(channel, "" + "\n", new IServerSelectorWriteCallback() {
+                            threadWritePoolExecutor.submit(new ServerSelectorWriteTask(channel, "" + "\n", new IServerSelectorWriteCallback() {
                                 @Override
                                 public void onStartWrite() {
-                                    MyLog.i(TAG, "Write start...");
                                 }
 
                                 @Override
                                 public void onEndWrite(boolean isSuccess) {
-                                    MyLog.i(TAG, "Write end...");
+                                    MyLog.d(TAG, "Write end...");
                                 }
                             }));
-                            // Cancel the write model, otherwise , the selector notice the write is already reaptly.
-//                            selectionKey.interestOps(selectionKey.interestOps() & ~SelectionKey.OP_WRITE);
                         }
                         //
                         if (selectionKey.isValid() && selectionKey.isReadable()) {
-//                            MyLog.i(TAG, "Read start...");
-                            threadReadPoolExecutor.execute(new ServerSelectorReadTask(channel, new IServerSelectorReadCallback() {
+                            threadReadPoolExecutor.submit(new ServerSelectorReadTask(channel, new IServerSelectorReadCallback() {
                                 @Override
                                 public void onStartRead() {
 
@@ -184,16 +176,13 @@ public class Server implements Runnable{
                                 @Override
                                 public void onEndRead(String data, int length) {
                                     if (length > 0) {
-//                                            MyLog.i(TAG, "Write start...");
                                             threadWritePoolExecutor.execute(new ServerSelectorWriteTask(channel, data + "\n", new IServerSelectorWriteCallback() {
                                                 @Override
                                                 public void onStartWrite() {
-                                                    MyLog.i(TAG, "Read start...");
                                                 }
 
                                                 @Override
                                                 public void onEndWrite(boolean isSuccess) {
-                                                    MyLog.i(TAG, "Read end...");
                                                 }
                                             }));
                                     } else if (length < 0) { // The client is closed.
@@ -227,6 +216,8 @@ public class Server implements Runnable{
      * @throws IOException
      */
     private void startLoop() throws IOException {
+        threadReadPoolExecutor.prestartAllCoreThreads();
+        threadWritePoolExecutor.prestartAllCoreThreads();
         if (thread == null) {
             thread = new Thread(this);
             thread.start();
