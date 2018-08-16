@@ -5,6 +5,7 @@ import com.hb.pocket.data.header.Header;
 import com.hb.pocket.data.header.HeaderConstant;
 import com.hb.utils.log.MyLog;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +23,7 @@ public class DataManager {
     public static void main(String[] args) {
         DataManager dataManager = new DataManager();
         String str = "Hello word 222222222 \n 111111";
-        String[] result = dataManager.spliteString(str, 3);
+        String[] result = dataManager.spliteString(str, 7);
 
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < result.length; i++) {
@@ -85,7 +86,7 @@ public class DataManager {
             return null;
         }
         // data.
-        byte[] data = msg.getBytes();
+        byte[] data = msg.getBytes(Charset.forName("UTF-8"));
         List<Byte> sendList = new ArrayList<>();
         // protocol header.
         sendList.add(HeaderConstant.HEAD);
