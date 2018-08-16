@@ -1,9 +1,5 @@
 package com.hb.utils.config;
 
-import com.hb.pocket.data.body.Body;
-import com.hb.pocket.server.Server;
-import org.omg.SendingContext.RunTime;
-
 /**
  * Created by hb on 10/07/2018.
  */
@@ -67,6 +63,9 @@ public class ServerConfig {
      */
     public static int writeKeepAliveTime = 300;
 
+    /**
+     * Init the server configuration by the Config.xml
+     */
     public static void initByXML() {
         try {
             XMLConfig.getInstance().initConfig("./Config.xml");

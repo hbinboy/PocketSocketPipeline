@@ -9,10 +9,11 @@ public class HeaderConstant {
      * protocol header.
      */
     public final static byte HEAD = 0xaa - 256;
+
     /**
      * package header name.
      */
-    public final static char[] NAME = {'H', 'B'};
+    public final static char[] NAME = "HAN.ROBIN".toCharArray();
 
     /**
      * package header version.
