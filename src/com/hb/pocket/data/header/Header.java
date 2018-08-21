@@ -51,6 +51,11 @@ public class Header {
      */
     private int dataLen = 0;
 
+    /**
+     * header length.
+     */
+    private int headLen = 0;
+
     public Header() {
 
     }
@@ -119,4 +124,11 @@ public class Header {
         this.dataLen = dataLen;
     }
 
+    public int getHeadLen() {
+        return headLen;
+    }
+
+    public void setHeadLen(int headLen) {
+        this.headLen = headLen;
+    }
 }

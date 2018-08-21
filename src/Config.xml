@@ -1,7 +1,7 @@
 <?xml version = "1.0" encoding="UTF-8"?>
 <switch>
     <!--Auto get the server ip.-->
-    <config key = "autoGetIp" value="true" />
+    <config key = "autoGetIp" value="false" />
     <!--The server listen ip.-->
     <config key = "ip" value="10.250.11.43" />
     <!--The server listening port.-->
@@ -28,5 +28,11 @@
     the core, this is the maximum time that excess idle threads
     will wait for new tasks before terminating.-->
     <config key = "writeKeepAliveTime" value="300" />
+
+    <!--The data config-->
+    <!--Receive the data with Header {@link com.hb.pocket.data.header.Header}-->
+    <config key = "readDataWithHeader" value="true" />
+    <!--Send the data with Header {@link com.hb.pocket.data.header.Header}-->
+    <config key = "writeDataWithHeader" value="true" />
 
 </switch>

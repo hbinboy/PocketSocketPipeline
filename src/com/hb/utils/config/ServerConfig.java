@@ -64,6 +64,16 @@ public class ServerConfig {
     public static int writeKeepAliveTime = 300;
 
     /**
+     * Receive the data with Header {@link com.hb.pocket.data.header.Header}
+     */
+    public static boolean readDataWithHeader = true;
+
+    /**
+     * Send the data with Header {@link com.hb.pocket.data.header.Header}
+     */
+    public static boolean writeDataWithHeader = true;
+
+    /**
      * Init the server configuration by the Config.xml
      */
     public static void initByXML() {
@@ -90,6 +100,9 @@ public class ServerConfig {
             ServerConfig.writeCorePoolSize = XMLConfig.getInstance().getConfigValue("writeCorePoolSize", Runtime.getRuntime().availableProcessors() + 10);
             ServerConfig.writeMaximumPoolSize = XMLConfig.getInstance().getConfigValue("writeMaximumPoolSize", Integer.MAX_VALUE);
             ServerConfig.writeKeepAliveTime = XMLConfig.getInstance().getConfigValue("writeKeepAliveTime", 300);
+
+            ServerConfig.readDataWithHeader = XMLConfig.getInstance().getConfigValue("readDataWithHeader", true);
+            ServerConfig.writeDataWithHeader = XMLConfig.getInstance().getConfigValue("writeDataWithHeader", true);
         } catch (Exception e) {
             e.printStackTrace();
         }

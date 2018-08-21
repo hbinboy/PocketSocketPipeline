@@ -85,8 +85,7 @@ public class DataManager {
         if (msg == null || "".equals(msg)) {
             return null;
         }
-        // data.
-        byte[] data = msg.getBytes(Charset.forName("UTF-8"));
+
         List<Byte> sendList = new ArrayList<>();
         // protocol header.
         sendList.add(HeaderConstant.HEAD);
@@ -114,6 +113,13 @@ public class DataManager {
         for (int i = 0; i < dataLen.length; i++) {
             sendList.add(dataLen[i]);
         }
+        // header length
+        byte[] headLen = intToByteArray(sendList.size() + 4);
+        for (int i = 0; i < headLen.length; i++) {
+            sendList.add(headLen[i]);
+        }
+        // data.
+        byte[] data = msg.getBytes(Charset.forName("UTF-8"));
         for (int i = 0; i < data.length; i++) {
             sendList.add(data[i]);
         }
@@ -223,6 +229,21 @@ public class DataManager {
                 return false;
             }
         }
+        // header value
+        if (data.length >= index + 1) {
+            byte[] headerLengthByte = new byte[4];
+            for (int i = 0; i < headerLengthByte.length; i++) {
+                if (data.length >= index + 1) {
+                    headerLengthByte[i] = data[index++];
+                } else {
+                    return false;
+                }
+            }
+            header.setHeadLen(byteArrayToInt(headerLengthByte));
+            if (header.getHeadLen() < 0) {
+                return false;
+            }
+        }
         // data value
         if (header.getDataLen() > 0 && data.length >= index + 1) {
             byte[] dataByte = new byte[header.getDataLen()];
@@ -235,6 +256,7 @@ public class DataManager {
             }
             body.setData(new String(dataByte));
         }
+
         return true;
     }
 
