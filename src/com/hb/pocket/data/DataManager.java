@@ -6,6 +6,8 @@ import com.hb.pocket.data.header.HeaderConstant;
 import com.hb.utils.log.MyLog;
 
 import java.nio.charset.Charset;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,11 +25,12 @@ public class DataManager {
     public static void main(String[] args) {
         DataManager dataManager = new DataManager();
         String str = "Hello word 222222222 \n 111111";
+        String wholeMessageMD5 = dataManager.md5(str);
         String[] result = dataManager.spliteString(str, 7);
 
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < result.length; i++) {
-            byte[] data = dataManager.genSendDataPackage(result[i], i, result.length);
+            byte[] data = dataManager.genSendDataPackage(result[i], i, result.length, wholeMessageMD5);
             if (dataManager.getReceiveDataPackageData(data) != null) {
                 sb.append(dataManager.getBody().getData());
             }
@@ -78,11 +81,11 @@ public class DataManager {
 
     /**
      * Generic data by string.
-     * @param msg
+     * @param sliceMessage
      * @return
      */
-    public byte[] genSendDataPackage(String msg, int index, int count) {
-        if (msg == null || "".equals(msg)) {
+    public byte[] genSendDataPackage(String sliceMessage, int index, int count, String wholeMD5) {
+        if (sliceMessage == null || "".equals(sliceMessage)) {
             return null;
         }
 
@@ -108,18 +111,29 @@ public class DataManager {
             sendList.add(countArr[i]);
         }
         // data length
-        int dataLength = msg.getBytes().length;
+        int dataLength = sliceMessage.getBytes().length;
         byte[] dataLen = intToByteArray(dataLength);
         for (int i = 0; i < dataLen.length; i++) {
             sendList.add(dataLen[i]);
         }
+        // the whole message md5 value.
+        byte[] wholeMD5Value = wholeMD5.getBytes(Charset.forName("UTF-8"));
+        for (int i = 0; i < wholeMD5Value.length; i++) {
+            sendList.add(wholeMD5Value[i]);
+        }
+        // the slice message md5 value.
+        byte[] sliceMD5Value = md5(sliceMessage).getBytes(Charset.forName("UTF-8"));
+        for (int i = 0; i < sliceMD5Value.length; i++) {
+            sendList.add(sliceMD5Value[i]);
+        }
+
         // header length
         byte[] headLen = intToByteArray(sendList.size() + 4);
         for (int i = 0; i < headLen.length; i++) {
             sendList.add(headLen[i]);
         }
         // data.
-        byte[] data = msg.getBytes(Charset.forName("UTF-8"));
+        byte[] data = sliceMessage.getBytes(Charset.forName("UTF-8"));
         for (int i = 0; i < data.length; i++) {
             sendList.add(data[i]);
         }
@@ -229,7 +243,31 @@ public class DataManager {
                 return false;
             }
         }
-        // header value
+        // the whole message value.
+        if (data.length >= index + 1) {
+            byte[] wholeMessageMD5Value = new byte[32];
+            for (int i = 0; i < wholeMessageMD5Value.length; i++) {
+                if (data.length >= index + 1) {
+                    wholeMessageMD5Value[i] = data[index++];
+                } else {
+                    return false;
+                }
+            }
+            header.setWholeMD5(new String(wholeMessageMD5Value).toCharArray());
+        }
+        // the selice message value.
+        if (data.length >= index + 1) {
+            byte[] sliceMessageMD5Value = new byte[32];
+            for (int i = 0; i < sliceMessageMD5Value.length; i++) {
+                if (data.length >= index + 1) {
+                    sliceMessageMD5Value[i] = data[index++];
+                } else {
+                    return false;
+                }
+            }
+            header.setSliceMD5(new String(sliceMessageMD5Value).toCharArray());
+        }
+        // header length value
         if (data.length >= index + 1) {
             byte[] headerLengthByte = new byte[4];
             for (int i = 0; i < headerLengthByte.length; i++) {
@@ -244,6 +282,7 @@ public class DataManager {
                 return false;
             }
         }
+
         // data value
         if (header.getDataLen() > 0 && data.length >= index + 1) {
             byte[] dataByte = new byte[header.getDataLen()];
@@ -258,6 +297,34 @@ public class DataManager {
         }
 
         return true;
+    }
+
+    /**
+     * Get 32 bits md5 value.
+     * @param value
+     * @return
+     */
+    public String md5(String value) {
+
+        try {
+            MessageDigest digest = MessageDigest.getInstance("md5");
+            byte[] result = digest.digest(value.getBytes());
+            StringBuffer buffer = new StringBuffer();
+            for (byte b : result) {
+                int number = b & 0xff;
+                String str = Integer.toHexString(number);
+                if (str.length() == 1) {
+                    buffer.append("0");
+                }
+                buffer.append(str);
+            }
+
+            return buffer.toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return "";
+        }
+
     }
 
     /**

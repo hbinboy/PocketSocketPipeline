@@ -47,6 +47,16 @@ public class Header {
     private char[] ext = new char[5];
 
     /**
+     * the whole message md5 value.
+     */
+    private char[] wholeMD5;
+
+    /**
+     * the slice message md5 value.
+     */
+    private char[] sliceMD5;
+
+    /**
      * data length.
      */
     private int dataLen = 0;
@@ -130,5 +140,21 @@ public class Header {
 
     public void setHeadLen(int headLen) {
         this.headLen = headLen;
+    }
+
+    public char[] getWholeMD5() {
+        return wholeMD5;
+    }
+
+    public void setWholeMD5(char[] wholeMD5) {
+        this.wholeMD5 = wholeMD5;
+    }
+
+    public void setSliceMD5(char[] sliceMD5) {
+        this.sliceMD5 = sliceMD5;
+    }
+
+    public char[] getSliceMD5() {
+        return sliceMD5;
     }
 }

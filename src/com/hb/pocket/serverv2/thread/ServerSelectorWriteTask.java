@@ -99,11 +99,12 @@ public class ServerSelectorWriteTask implements Runnable {
      */
     private boolean writeDataWithHeader(SocketChannel channel, String msg) throws IOException {
         DataManager dataManager = new DataManager();
+        String wholeMessageMD5 = dataManager.md5(msg);
         String[] result = dataManager.spliteString(msg, 7);
 
         try {
             for (int i = 0; i < result.length; i++) {
-                byte[] data = dataManager.genSendDataPackage(result[i] + '\n', i, result.length);
+                byte[] data = dataManager.genSendDataPackage(result[i] + '\n', i, result.length, wholeMessageMD5);
                 ByteBuffer buffer = ByteBuffer.allocate(data.length); // Alloc heap buffer.
                 buffer.put(data);
                 buffer.flip();// Switch the read model.
