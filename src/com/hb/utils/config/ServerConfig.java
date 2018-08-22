@@ -1,5 +1,7 @@
 package com.hb.utils.config;
 
+import com.hb.pocket.data.header.HeaderConfig;
+
 /**
  * Created by hb on 10/07/2018.
  */
@@ -107,7 +109,7 @@ public class ServerConfig {
 
             ServerConfig.readDataWithHeader = XMLConfig.getInstance().getConfigValue("readDataWithHeader", true);
             ServerConfig.writeDataWithHeader = XMLConfig.getInstance().getConfigValue("writeDataWithHeader", true);
-            ServerConfig.encryptionType = XMLConfig.getInstance().getConfigValue("encryptionType", 0);
+            HeaderConfig.encryptionType = XMLConfig.getInstance().getConfigValue("encryptionType", 0);
         } catch (Exception e) {
             e.printStackTrace();
         }

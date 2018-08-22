@@ -2,6 +2,7 @@ package com.hb.pocket.data;
 
 import com.hb.pocket.data.body.Body;
 import com.hb.pocket.data.header.Header;
+import com.hb.pocket.data.header.HeaderConfig;
 import com.hb.pocket.data.header.HeaderConstant;
 import com.hb.pocket.encryption.EncryptionConst;
 import com.hb.utils.config.ServerConfig;
@@ -119,12 +120,12 @@ public class DataManager {
             sendList.add(dataLen[i]);
         }
         // the encryption type
-        byte[] encryptionTypeValue = intToByteArray(ServerConfig.encryptionType);
+        byte[] encryptionTypeValue = intToByteArray(HeaderConfig.encryptionType);
         for (int i= 0; i < encryptionTypeValue.length; i++) {
             sendList.add(encryptionTypeValue[i]);
         }
         // check the encryption type.
-        if (ServerConfig.encryptionType == EncryptionConst.MD5_TYPE) {
+        if (HeaderConfig.encryptionType == EncryptionConst.MD5_TYPE) {
             // the whole message md5 value.
             byte[] wholeMD5Value = wholeMD5.getBytes(Charset.forName("UTF-8"));
             for (int i = 0; i < wholeMD5Value.length; i++) {
