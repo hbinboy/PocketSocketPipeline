@@ -34,5 +34,7 @@
     <config key = "readDataWithHeader" value="true" />
     <!--Send the data with Header {@link com.hb.pocket.data.header.Header}-->
     <config key = "writeDataWithHeader" value="true" />
+    <!--The data encryption type 0: the data is raw 1: md5-->
+    <config key = "encryptionType" value="1" />
 
 </switch>

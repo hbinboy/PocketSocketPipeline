@@ -74,6 +74,10 @@ public class ServerConfig {
     public static boolean writeDataWithHeader = true;
 
     /**
+     * The data encryption type 0: the data is raw 1: md5.
+     */
+    public static int encryptionType = 0;
+    /**
      * Init the server configuration by the Config.xml
      */
     public static void initByXML() {
@@ -103,6 +107,7 @@ public class ServerConfig {
 
             ServerConfig.readDataWithHeader = XMLConfig.getInstance().getConfigValue("readDataWithHeader", true);
             ServerConfig.writeDataWithHeader = XMLConfig.getInstance().getConfigValue("writeDataWithHeader", true);
+            ServerConfig.encryptionType = XMLConfig.getInstance().getConfigValue("encryptionType", 0);
         } catch (Exception e) {
             e.printStackTrace();
         }

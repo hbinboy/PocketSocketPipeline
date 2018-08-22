@@ -3,6 +3,8 @@ package com.hb.pocket.data;
 import com.hb.pocket.data.body.Body;
 import com.hb.pocket.data.header.Header;
 import com.hb.pocket.data.header.HeaderConstant;
+import com.hb.pocket.encryption.EncryptionConst;
+import com.hb.utils.config.ServerConfig;
 import com.hb.utils.log.MyLog;
 
 import java.nio.charset.Charset;
@@ -116,15 +118,23 @@ public class DataManager {
         for (int i = 0; i < dataLen.length; i++) {
             sendList.add(dataLen[i]);
         }
-        // the whole message md5 value.
-        byte[] wholeMD5Value = wholeMD5.getBytes(Charset.forName("UTF-8"));
-        for (int i = 0; i < wholeMD5Value.length; i++) {
-            sendList.add(wholeMD5Value[i]);
+        // the encryption type
+        byte[] encryptionTypeValue = intToByteArray(ServerConfig.encryptionType);
+        for (int i= 0; i < encryptionTypeValue.length; i++) {
+            sendList.add(encryptionTypeValue[i]);
         }
-        // the slice message md5 value.
-        byte[] sliceMD5Value = md5(sliceMessage).getBytes(Charset.forName("UTF-8"));
-        for (int i = 0; i < sliceMD5Value.length; i++) {
-            sendList.add(sliceMD5Value[i]);
+        // check the encryption type.
+        if (ServerConfig.encryptionType == EncryptionConst.MD5_TYPE) {
+            // the whole message md5 value.
+            byte[] wholeMD5Value = wholeMD5.getBytes(Charset.forName("UTF-8"));
+            for (int i = 0; i < wholeMD5Value.length; i++) {
+                sendList.add(wholeMD5Value[i]);
+            }
+            // the slice message md5 value.
+            byte[] sliceMD5Value = md5(sliceMessage).getBytes(Charset.forName("UTF-8"));
+            for (int i = 0; i < sliceMD5Value.length; i++) {
+                sendList.add(sliceMD5Value[i]);
+            }
         }
 
         // header length
@@ -243,29 +253,46 @@ public class DataManager {
                 return false;
             }
         }
-        // the whole message value.
+        // the encryption type
         if (data.length >= index + 1) {
-            byte[] wholeMessageMD5Value = new byte[32];
-            for (int i = 0; i < wholeMessageMD5Value.length; i++) {
+            byte[] encryptionTypeByte = new byte[4];
+            for (int i = 0; i < encryptionTypeByte.length; i++) {
                 if (data.length >= index + 1) {
-                    wholeMessageMD5Value[i] = data[index++];
+                    encryptionTypeByte[i] = data[index++];
                 } else {
                     return false;
                 }
             }
-            header.setWholeMD5(new String(wholeMessageMD5Value).toCharArray());
+            header.setEncryptionType(byteArrayToInt(encryptionTypeByte));
+            if (header.getEncryptionType() < EncryptionConst.RAW_TYPE || header.getEncryptionType() > EncryptionConst.MD5_TYPE) {
+                return false;
+            }
         }
-        // the selice message value.
-        if (data.length >= index + 1) {
-            byte[] sliceMessageMD5Value = new byte[32];
-            for (int i = 0; i < sliceMessageMD5Value.length; i++) {
-                if (data.length >= index + 1) {
-                    sliceMessageMD5Value[i] = data[index++];
-                } else {
-                    return false;
+        if (header.getEncryptionType() == EncryptionConst.MD5_TYPE) {
+            // the whole message MD5 value.
+            if (data.length >= index + 1) {
+                byte[] wholeMessageMD5Value = new byte[32];
+                for (int i = 0; i < wholeMessageMD5Value.length; i++) {
+                    if (data.length >= index + 1) {
+                        wholeMessageMD5Value[i] = data[index++];
+                    } else {
+                        return false;
+                    }
                 }
+                header.setWholeMD5(new String(wholeMessageMD5Value).toCharArray());
             }
-            header.setSliceMD5(new String(sliceMessageMD5Value).toCharArray());
+            // the selice message MD5 value.
+            if (data.length >= index + 1) {
+                byte[] sliceMessageMD5Value = new byte[32];
+                for (int i = 0; i < sliceMessageMD5Value.length; i++) {
+                    if (data.length >= index + 1) {
+                        sliceMessageMD5Value[i] = data[index++];
+                    } else {
+                        return false;
+                    }
+                }
+                header.setSliceMD5(new String(sliceMessageMD5Value).toCharArray());
+            }
         }
         // header length value
         if (data.length >= index + 1) {

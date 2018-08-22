@@ -66,6 +66,8 @@ public class Header {
      */
     private int headLen = 0;
 
+    private int encryptionType = 0;
+
     public Header() {
 
     }
@@ -156,5 +158,13 @@ public class Header {
 
     public char[] getSliceMD5() {
         return sliceMD5;
+    }
+
+    public int getEncryptionType() {
+        return encryptionType;
+    }
+
+    public void setEncryptionType(int encryptionType) {
+        this.encryptionType = encryptionType;
     }
 }
