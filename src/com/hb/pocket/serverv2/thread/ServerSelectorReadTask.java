@@ -100,25 +100,29 @@ public class ServerSelectorReadTask implements Runnable {
             int bodyLen = 0;
             int offset = 0;
             buffer.position(0);
-            while (remainLen > 0) {
-                byte[] bufferBak = new byte[len - offset];
-                System.arraycopy(bytes, offset, bufferBak, 0, len - offset);
-                MyLog.d(TAG, "" + len);
-                DataManager dataManager = new DataManager();
-                if (len > 0) {
-                    if (dataManager.getReceiveDataPackageData(bufferBak) != null) {
-                        dataManager.getBody().getData();
-                        offset += dataManager.getHeader().getHeadLen() + dataManager.getHeader().getDataLen();
+            if (remainLen >= 0) {
+                while (remainLen > 0) {
+                    byte[] bufferBak = new byte[len - offset];
+                    System.arraycopy(bytes, offset, bufferBak, 0, len - offset);
+                    MyLog.d(TAG, "" + len);
+                    DataManager dataManager = new DataManager();
+                    if (len > 0) {
+                        if (dataManager.getReceiveDataPackageData(bufferBak) != null) {
+                            dataManager.getBody().getData();
+                            offset += dataManager.getHeader().getHeadLen() + dataManager.getHeader().getDataLen();
 
-                        remainLen = len - offset;
-                        MyLog.i(TAG, dataManager.getBody().getData()); // buffer.array()：get the HeapByteFuffer raw data.
+                            remainLen = len - offset;
+                            MyLog.i(TAG, dataManager.getBody().getData()); // buffer.array()：get the HeapByteFuffer raw data.
+                        }
+                    }
+                    if (iServerSelectorReadCallback != null && len > 0) {
+                        iServerSelectorReadCallback.onEndRead(dataManager.getBody().getData(), dataManager.getBody().getData().length());
+                    } else {
+                        iServerSelectorReadCallback.onEndRead(null, bodyLen);
                     }
                 }
-                if (iServerSelectorReadCallback != null && len > 0) {
-                    iServerSelectorReadCallback.onEndRead(dataManager.getBody().getData(), dataManager.getBody().getData().length());
-                } else {
-                    iServerSelectorReadCallback.onEndRead(null, bodyLen);
-                }
+            } else {
+                iServerSelectorReadCallback.onEndRead(null, -1);
             }
             return len;
         } catch (IOException e) {
