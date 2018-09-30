@@ -45,9 +45,9 @@ public class Server implements Runnable{
 
     private boolean isShutDown = false;
 
-    ThreadPoolExecutor threadReadPoolExecutor = null;
+    private ThreadPoolExecutor threadReadPoolExecutor = null;
 
-    ThreadPoolExecutor threadWritePoolExecutor = null;
+    private ThreadPoolExecutor threadWritePoolExecutor = null;
 
     private Server() {
     }
@@ -80,13 +80,31 @@ public class Server implements Runnable{
         ServerConfig.initByXML();
         threadReadPoolExecutor = new ThreadPoolExecutor(ServerConfig.readCorePoolSize, ServerConfig.readMaximumPoolSize, ServerConfig.readKeepAliveTime,
                 TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
+        if (threadReadPoolExecutor == null) {
+            return false;
+        }
         threadWritePoolExecutor = new ThreadPoolExecutor(ServerConfig.writeCorePoolSize , ServerConfig.writeMaximumPoolSize, ServerConfig.writeKeepAliveTime,
                 TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
+        if (threadWritePoolExecutor == null) {
+            return false;
+        }
         selectorProvider = SelectorProvider.provider();
+        if (selectorProvider == null) {
+            return false;
+        }
         socketChannelMap = new ConcurrentHashMap<>();
+        if (socketChannelMap == null) {
+            return false;
+        }
         try {
             selector = selectorProvider.openSelector();
+            if (selector == null) {
+                return false;
+            }
             serverSocketChannel = selectorProvider.openServerSocketChannel();
+            if (serverSocketChannel == null) {
+                return false;
+            }
             serverSocketChannel.configureBlocking(false);
         } catch (IOException e) {
             e.printStackTrace();
@@ -96,11 +114,15 @@ public class Server implements Runnable{
     }
 
 
-    public void startServer() throws IOException {
+    public boolean startServer() throws IOException {
         try {
             selectionKey = serverSocketChannel.register(selector,0,null);
+            if (selectionKey == null) {
+                return false;
+            }
         } catch (ClosedChannelException e) {
             e.printStackTrace();
+            return false;
         }
 
         if (ServerConfig.autoGetIp) {
@@ -116,15 +138,20 @@ public class Server implements Runnable{
                 MyLog.i(TAG, "Server sarted port in " + ServerConfig.port);
             } else {
                 MyLog.e(TAG, "Can not get the ip address,could not start the server.");
+                return false;
             }
         } else {
             if (serverSocketChannel.bind(new InetSocketAddress(ServerConfig.ip, ServerConfig.port),ServerConfig.backLog).socket().isBound()) { // Bind success.
                 selectionKey.interestOps(SelectionKey.OP_ACCEPT); // Listen the connection request.
+            } else {
+                MyLog.e(TAG, "Can not get the ip address,could not start the server.");
+                return false;
             }
             MyLog.i(TAG, "Server sarted Ip in " + ServerConfig.ip);
             MyLog.i(TAG, "Server sarted port in " + ServerConfig.port);
         }
         startLoop();
+        return true;
     }
 
     /**

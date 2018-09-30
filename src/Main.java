@@ -25,10 +25,13 @@ public class Main {
     /**
      * Start server version 2.0.0
      */
-    private static void startServerV2() {
+    private static boolean startServerV2() {
         com.hb.pocket.serverv2.Server server = com.hb.pocket.serverv2.Server.getInstance();
         try {
-            server.init();
+            if (!server.init()) {
+                MyLog.i(TAG, "Could not start the server.");
+                return false;
+            }
             server.startServer();
         } catch (IOException e) {
             e.printStackTrace();
@@ -43,6 +46,7 @@ public class Main {
             }
         }
         MyLog.i(TAG, "Main thread is exited.");
+        return true;
     }
 
     /**
