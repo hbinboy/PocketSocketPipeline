@@ -1,5 +1,6 @@
 package com.hb.pocket.serverv2;
 
+import com.hb.pocket.data.Data;
 import com.hb.pocket.serverv2.thread.*;
 import com.hb.pocket.serverv2.thread.callback.IServerSelectorAcceptCallback;
 import com.hb.pocket.serverv2.thread.callback.IServerSelectorReadCallback;
@@ -39,7 +40,7 @@ public class Server implements Runnable{
 
     private ServerSocketChannel serverSocketChannel = null;
 
-    private Map<SocketChannel, SocketChannel> socketChannelMap;
+    private Map<SocketChannel, Map<String, Data>> socketChannelMap;
 
     private SelectionKey selectionKey;
 
@@ -203,7 +204,7 @@ public class Server implements Runnable{
                         }
                         //
                         if (selectionKey.isValid() && selectionKey.isReadable()) {
-                            threadReadPoolExecutor.submit(new ServerSelectorReadTask(channel, new IServerSelectorReadCallback() {
+                            threadReadPoolExecutor.submit(new ServerSelectorReadTask(channel, socketChannelMap.get(channel), new IServerSelectorReadCallback() {
                                 @Override
                                 public void onStartRead() {
 
@@ -212,15 +213,16 @@ public class Server implements Runnable{
                                 @Override
                                 public void onEndRead(String data, int length) {
                                     if (length >= 0) {
-                                            threadReadPoolExecutor.submit(new ServerSelectorWriteTask(channel, data + "\n", new IServerSelectorWriteCallback() {
-                                                @Override
-                                                public void onStartWrite() {
-                                                }
+                                        MyLog.i(TAG, "The whole data display: "+ data);
+                                        threadReadPoolExecutor.submit(new ServerSelectorWriteTask(channel, data + "\n", new IServerSelectorWriteCallback() {
+                                            @Override
+                                            public void onStartWrite() {
+                                            }
 
-                                                @Override
-                                                public void onEndWrite(boolean isSuccess) {
-                                                }
-                                            }));
+                                            @Override
+                                            public void onEndWrite(boolean isSuccess) {
+                                            }
+                                        }));
                                     } else if (length < 0) { // The client is closed.
                                         socketChannelMap.remove(channel);
                                         try {
@@ -270,7 +272,8 @@ public class Server implements Runnable{
             channel = serverSocketChannel.accept(); // Accept the connection
             channel.configureBlocking(false); // Not block model.
             channel.register(selector, SelectionKey.OP_READ, null); // Listener read.
-            socketChannelMap.put(channel, channel);
+            Map<String, Data> stringDataMap = new ConcurrentHashMap<>();
+            socketChannelMap.put(channel, stringDataMap);
         } catch (IOException e) {
             if (channel != null) {
                 socketChannelMap.remove(channel);
@@ -293,9 +296,9 @@ public class Server implements Runnable{
 
     public void clearAllClients() {
         if (socketChannelMap != null) {
-            for (ConcurrentHashMap.Entry<SocketChannel, SocketChannel> entry : socketChannelMap.entrySet()) {
+            for (ConcurrentHashMap.Entry<SocketChannel, Map<String, Data>> entry : socketChannelMap.entrySet()) {
                 try {
-                    entry.getValue().close();
+                    entry.getKey().close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -309,8 +312,8 @@ public class Server implements Runnable{
      */
     public void sendBroadMessage(String msg) {
         if (socketChannelMap != null) {
-            for (ConcurrentHashMap.Entry<SocketChannel, SocketChannel> entry : socketChannelMap.entrySet()) {
-                threadWritePoolExecutor.execute(new ServerSelectorWriteTask(entry.getValue(), msg + "\n", new IServerSelectorWriteCallback() {
+            for (ConcurrentHashMap.Entry<SocketChannel, Map<String, Data>> entry : socketChannelMap.entrySet()) {
+                threadWritePoolExecutor.execute(new ServerSelectorWriteTask(entry.getKey(), msg + "\n", new IServerSelectorWriteCallback() {
                     @Override
                     public void onStartWrite() {
 

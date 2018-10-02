@@ -1,14 +1,15 @@
 package com.hb.pocket.serverv2.thread;
 
+import com.hb.pocket.data.Data;
 import com.hb.pocket.data.DataManager;
 import com.hb.pocket.serverv2.thread.callback.IServerSelectorReadCallback;
 import com.hb.utils.config.ServerConfig;
 import com.hb.utils.log.MyLog;
-
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
+import java.util.Map;
 
 /**
  * Created by hb on 16/07/2018.
@@ -24,8 +25,11 @@ public class ServerSelectorReadTask implements Runnable {
 
     private IServerSelectorReadCallback iServerSelectorReadCallback;
 
-    public ServerSelectorReadTask(SocketChannel socketChannel, IServerSelectorReadCallback iServerSelectorReadCallback) {
+    private Map<String, Data> mapData;
+
+    public ServerSelectorReadTask(SocketChannel socketChannel, Map<String, Data> mapData, IServerSelectorReadCallback iServerSelectorReadCallback) {
         this.socketChannel = socketChannel;
+        this.mapData = mapData;
         this.iServerSelectorReadCallback = iServerSelectorReadCallback;
     }
     @Override
@@ -112,11 +116,24 @@ public class ServerSelectorReadTask implements Runnable {
                             offset += dataManager.getHeader().getHeadLen() + dataManager.getHeader().getDataLen();
 
                             remainLen = len - offset;
-                            MyLog.i(TAG, dataManager.getBody().getData()); // buffer.array()：get the HeapByteFuffer raw data.
+                            MyLog.i(TAG, "Split data display: "+ dataManager.getBody().getData()); // buffer.array()：get the HeapByteFuffer raw data.
                         }
                     }
                     if (iServerSelectorReadCallback != null && len > 0) {
-                        iServerSelectorReadCallback.onEndRead(dataManager.getBody().getData(), dataManager.getBody().getData().length());
+                        String tmpMd5 = new String(dataManager.getHeader().getWholeMD5());
+                        if (mapData.get(tmpMd5) == null) {
+                            Data data = new Data();
+                            data.setWholeMD5(tmpMd5);
+                            mapData.put(tmpMd5, data);
+                        }
+                        if (mapData.get(tmpMd5).getHeaderMap().get(dataManager.getHeader().getIndexData()) == null) {
+                            mapData.get(tmpMd5).getHeaderMap().put(dataManager.getHeader().getIndexData(), dataManager.getHeader());
+                            mapData.get(tmpMd5).getBodyMap().put(dataManager.getHeader().getIndexData(), dataManager.getBody());
+                        }
+                        if (dataManager.getHeader().getCount() == mapData.get(tmpMd5).getHeaderMap().size()) {
+                            iServerSelectorReadCallback.onEndRead(mapData.get(tmpMd5).getWholeData(), mapData.get(tmpMd5).getWholeData().length());
+                            mapData.remove(tmpMd5);
+                        }
                     } else {
                         iServerSelectorReadCallback.onEndRead(null, bodyLen);
                     }
