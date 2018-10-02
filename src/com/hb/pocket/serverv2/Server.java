@@ -212,7 +212,7 @@ public class Server implements Runnable{
                                 @Override
                                 public void onEndRead(String data, int length) {
                                     if (length >= 0) {
-                                            threadWritePoolExecutor.execute(new ServerSelectorWriteTask(channel, data + "\n", new IServerSelectorWriteCallback() {
+                                            threadReadPoolExecutor.submit(new ServerSelectorWriteTask(channel, data + "\n", new IServerSelectorWriteCallback() {
                                                 @Override
                                                 public void onStartWrite() {
                                                 }

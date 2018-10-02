@@ -57,6 +57,20 @@ public class DataManager {
         }
     }
 
+    /**
+     * Splite a large data into a small package then send.
+     * @param msg
+     * @return
+     */
+    public String[] spliteString(String msg) {
+        return spliteString(msg, HeaderConfig.frameSize);
+    }
+
+    /**
+     * Splite a large data into a small package then send.
+     * @param msg
+     * @return
+     */
     public String[] spliteString(String msg, int frameSize) {
         if (msg == null || msg.length() == 0 || frameSize <= 0) {
             return null;
