@@ -8,7 +8,7 @@ public class LogConfig {
 
     public static final boolean isVerbose = true;
 
-    public static final boolean isDebug = true;
+    public static final boolean isDebug = false;
 
     public static final boolean isInfo = true;
 

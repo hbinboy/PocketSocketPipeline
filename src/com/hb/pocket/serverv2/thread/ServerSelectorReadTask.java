@@ -116,7 +116,7 @@ public class ServerSelectorReadTask implements Runnable {
                             offset += dataManager.getHeader().getHeadLen() + dataManager.getHeader().getDataLen();
 
                             remainLen = len - offset;
-                            MyLog.i(TAG, "Split data display: "+ dataManager.getBody().getData()); // buffer.array()：get the HeapByteFuffer raw data.
+                            MyLog.d(TAG, "Split data display: "+ dataManager.getBody().getData()); // buffer.array()：get the HeapByteFuffer raw data.
                         }
                     }
                     if (iServerSelectorReadCallback != null && len > 0) {
