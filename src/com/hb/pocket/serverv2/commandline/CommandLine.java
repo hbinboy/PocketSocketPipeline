@@ -72,8 +72,12 @@ public class CommandLine {
             return false;
         }
         if (args[0].toLowerCase().startsWith("BroadMessage".toLowerCase())) {
-            BroadMessageCommand broadMessageCommand = new BroadMessageCommand("BroadMessage", mainCommandMap.get(args[0].toLowerCase()),commandLine, "-:M", server);
-            broadMessageCommand.excute();
+            if (mainCommandMap.get(args[0].toLowerCase()) != null && mainCommandMap.get(args[0].toLowerCase()).size() != 0) {
+                BroadMessageCommand broadMessageCommand = new BroadMessageCommand("BroadMessage", mainCommandMap.get(args[0].toLowerCase()), commandLine, "-:M", server);
+                broadMessageCommand.excute();
+            } else {
+                MyLog.i(TAG, "Not support this command!");
+            }
         } else if (args[0].toLowerCase().startsWith("Exit".toLowerCase())) {
             try {
                 server.shutDownServer();
@@ -90,6 +94,8 @@ public class CommandLine {
             MyLog.i(TAG, "2.0.0 version.");
         } else if (args[0].toLowerCase().startsWith("Selector".toLowerCase())) {
             server.getSelector();
+        } else {
+            MyLog.i(TAG, "Not support this command!");
         }
         return false;
     }
