@@ -182,7 +182,7 @@ public class DataManager {
 
         int index = 0;
         // check head.
-        if (data.length >= index + 1) {
+        if (data.length > index) {
             if (data[index] != HeaderConstant.HEAD) {
                 return false;
             } else {
@@ -192,7 +192,7 @@ public class DataManager {
             return false;
         }
         // check name.
-        if (data.length >= index + 1) {
+        if (data.length > index) {
             byte[] name = charArrayToByte(HeaderConstant.NAME);
             if (name == null || name.length == 0) {
                 return false;
@@ -208,7 +208,7 @@ public class DataManager {
             return false;
         }
         // check version.
-        if (data.length >= index + 1) {
+        if (data.length > index) {
             if (HeaderConstant.VERSION == data[index]) {
                 header.setVersion(data[index++]);
             } else {
@@ -216,7 +216,7 @@ public class DataManager {
             }
         }
         // check type
-        if (data.length >= index + 1) {
+        if (data.length > index) {
             if (data[index] == 0x01 || data[index] == 0x02 || data[index] == 0x03) {
                 header.setType(data[index++]);
             } else {
@@ -224,10 +224,10 @@ public class DataManager {
             }
         }
         // index
-        if (data.length >= index + 1) {
+        if (data.length > index) {
             byte[] indexLen = new byte[4];
             for (int i = 0; i < indexLen.length; i++) {
-                if (data.length >= index + 1) {
+                if (data.length > index) {
                     indexLen[i] = data[index++];
                 } else {
                     return false;
@@ -239,10 +239,10 @@ public class DataManager {
             }
         }
         // count
-        if (data.length >= index + 1) {
+        if (data.length > index) {
             byte[] countByte = new byte[4];
             for (int i = 0; i < countByte.length; i++) {
-                if (data.length >= index + 1) {
+                if (data.length > index) {
                     countByte[i] = data[index++];
                 } else {
                     return false;
@@ -254,10 +254,10 @@ public class DataManager {
             }
         }
         // data length
-        if (data.length >= index + 1) {
+        if (data.length > index) {
             byte[] dataLengthByte = new byte[4];
             for (int i = 0; i < dataLengthByte.length; i++) {
-                if (data.length >= index + 1) {
+                if (data.length > index) {
                     dataLengthByte[i] = data[index++];
                 } else {
                     return false;
@@ -269,10 +269,10 @@ public class DataManager {
             }
         }
         // the encryption type
-        if (data.length >= index + 1) {
+        if (data.length > index) {
             byte[] encryptionTypeByte = new byte[4];
             for (int i = 0; i < encryptionTypeByte.length; i++) {
-                if (data.length >= index + 1) {
+                if (data.length > index) {
                     encryptionTypeByte[i] = data[index++];
                 } else {
                     return false;
@@ -284,10 +284,10 @@ public class DataManager {
             }
         }
         // the whole message MD5 value.
-        if (data.length >= index + 1) {
+        if (data.length > index) {
             byte[] wholeMessageMD5Value = new byte[32];
             for (int i = 0; i < wholeMessageMD5Value.length; i++) {
-                if (data.length >= index + 1) {
+                if (data.length > index) {
                     wholeMessageMD5Value[i] = data[index++];
                 } else {
                     return false;
@@ -297,10 +297,10 @@ public class DataManager {
         }
         if (header.getEncryptionType() == EncryptionConst.MD5_TYPE) {
             // the selice message MD5 value.
-            if (data.length >= index + 1) {
+            if (data.length > index) {
                 byte[] sliceMessageMD5Value = new byte[32];
                 for (int i = 0; i < sliceMessageMD5Value.length; i++) {
-                    if (data.length >= index + 1) {
+                    if (data.length > index) {
                         sliceMessageMD5Value[i] = data[index++];
                     } else {
                         return false;
@@ -310,10 +310,10 @@ public class DataManager {
             }
         }
         // header length value
-        if (data.length >= index + 1) {
+        if (data.length > index) {
             byte[] headerLengthByte = new byte[4];
             for (int i = 0; i < headerLengthByte.length; i++) {
-                if (data.length >= index + 1) {
+                if (data.length > index) {
                     headerLengthByte[i] = data[index++];
                 } else {
                     return false;
@@ -326,10 +326,10 @@ public class DataManager {
         }
 
         // data value
-        if (header.getDataLen() > 0 && data.length >= index + 1) {
+        if (header.getDataLen() > 0 && data.length > index) {
             byte[] dataByte = new byte[header.getDataLen()];
             for (int i = 0; i < dataByte.length; i++) {
-                if (data.length >= index + 1) {
+                if (data.length > index) {
                     dataByte[i] = data[index++];
                 } else {
                     return false;
