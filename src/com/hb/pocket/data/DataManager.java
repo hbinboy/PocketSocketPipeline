@@ -26,6 +26,7 @@ public class DataManager {
     private Body body;
 
     public static void main(String[] args) {
+        long consumingTime = System.nanoTime();
         DataManager dataManager = new DataManager();
         String str = "Hello word 222222222 \n 111111";
         String wholeMessageMD5 = dataManager.md5(str);
@@ -285,7 +286,7 @@ public class DataManager {
         }
         // the whole message MD5 value.
         if (data.length > index) {
-            byte[] wholeMessageMD5Value = new byte[32];
+            byte[] wholeMessageMD5Value = new byte[46];
             for (int i = 0; i < wholeMessageMD5Value.length; i++) {
                 if (data.length > index) {
                     wholeMessageMD5Value[i] = data[index++];
@@ -298,7 +299,7 @@ public class DataManager {
         if (header.getEncryptionType() == EncryptionConst.MD5_TYPE) {
             // the selice message MD5 value.
             if (data.length > index) {
-                byte[] sliceMessageMD5Value = new byte[32];
+                byte[] sliceMessageMD5Value = new byte[46];
                 for (int i = 0; i < sliceMessageMD5Value.length; i++) {
                     if (data.length > index) {
                         sliceMessageMD5Value[i] = data[index++];
@@ -360,7 +361,7 @@ public class DataManager {
                 }
                 buffer.append(str);
             }
-
+            buffer.append(System.nanoTime());
             return buffer.toString();
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
